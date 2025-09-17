@@ -1,0 +1,18 @@
+# ko configuration for dyndnsr53
+builds:
+- id: dyndnsr53
+  main: .
+  ldflags:
+  - -X main.version={{.Env.VERSION}}
+  - -X main.commit={{.Env.COMMIT}}
+  - -X main.buildDate={{.Env.BUILD_DATE}}
+  env:
+  - CGO_ENABLED=0
+
+# Default base image
+defaultBaseImage: gcr.io/distroless/static:nonroot
+
+# Platforms to build for
+platforms:
+- linux/amd64
+- linux/arm64

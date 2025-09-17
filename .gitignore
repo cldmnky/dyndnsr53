@@ -17,6 +17,19 @@ coverage.*
 *.coverprofile
 profile.cov
 
+# Build artifacts directory
+build/
+
+# Local tool binaries
+bin/
+
+# Air hot reload
+tmp/
+build-errors.log
+
+# Ko build cache
+.ko/
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 

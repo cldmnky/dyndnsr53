@@ -1,0 +1,43 @@
+# .containerignore - exclude files from container build context
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Build artifacts
+dyndnsr53
+dyndnsr53_*
+*.exe
+coverage.out
+coverage.html
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*_test.go
+testdata/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# License (included in source)
+LICENSE
