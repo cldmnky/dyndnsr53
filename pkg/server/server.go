@@ -44,11 +44,10 @@ type RequestLog struct {
 	Duration     string    `json:"duration"`
 }
 
-// Example: hardcoded credentials and user agent for demonstration
+// Example: hardcoded credentials for demonstration
 var (
-	validUser      = "user"
-	validPassword  = "pass"
-	validUserAgent = "dyndnsr53-client"
+	validUser     = "user"
+	validPassword = "pass"
 )
 
 // Server holds the DNS provider and configuration
@@ -77,7 +76,7 @@ func (s *Server) StartServer(addr string) error {
 }
 
 // healthHandler provides a simple health check endpoint
-func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) healthHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "OK")
@@ -113,14 +112,6 @@ func (s *Server) dynDNSUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log := slog.Default().With("remote", r.RemoteAddr)
-
-	// Check User-Agent
-	ua := r.Header.Get("User-Agent")
-	if ua == "" || !strings.Contains(ua, validUserAgent) {
-		log.Warn("bad user agent", "user-agent", ua)
-		logAndRespond(http.StatusBadRequest, MsgBadAgent, "invalid user agent")
-		return
-	}
 
 	// Check HTTP method (should be GET)
 	if r.Method != http.MethodGet {

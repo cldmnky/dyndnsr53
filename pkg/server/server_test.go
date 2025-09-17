@@ -25,7 +25,7 @@ func TestDynDNSUpdateHandler_Success(t *testing.T) {
 	server := NewServer(mockProvider)
 
 	req := httptest.NewRequest("GET", "/nic/update?hostname=test.example.com&myip=1.2.3.4", nil)
-	req.Header.Set("User-Agent", validUserAgent)
+	req.Header.Set("User-Agent", "any-user-agent")
 	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", validUser, validPassword))))
 
 	rw := httptest.NewRecorder()
@@ -50,7 +50,7 @@ func TestDynDNSUpdateHandler_BadAuth(t *testing.T) {
 	server := NewServer(mockProvider)
 
 	req := httptest.NewRequest("GET", "/nic/update?hostname=test.example.com&myip=1.2.3.4", nil)
-	req.Header.Set("User-Agent", validUserAgent)
+	req.Header.Set("User-Agent", "any-user-agent")
 	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("bad:creds")))
 
 	rw := httptest.NewRecorder()
@@ -70,30 +70,12 @@ func TestDynDNSUpdateHandler_BadAuth(t *testing.T) {
 	}
 }
 
-func TestDynDNSUpdateHandler_MissingUserAgent(t *testing.T) {
-	mockProvider := &MockProvider{}
-	server := NewServer(mockProvider)
-
-	req := httptest.NewRequest("GET", "/nic/update?hostname=test.example.com&myip=1.2.3.4", nil)
-	// No User-Agent
-	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", validUser, validPassword))))
-
-	rw := httptest.NewRecorder()
-
-	server.dynDNSUpdateHandler(rw, req)
-
-	resp := rw.Result()
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Fatalf("expected 400 Bad Request, got %d", resp.StatusCode)
-	}
-}
-
 func TestDynDNSUpdateHandler_MissingParams(t *testing.T) {
 	mockProvider := &MockProvider{}
 	server := NewServer(mockProvider)
 
 	req := httptest.NewRequest("GET", "/nic/update?myip=1.2.3.4", nil)
-	req.Header.Set("User-Agent", validUserAgent)
+	req.Header.Set("User-Agent", "any-user-agent")
 	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", validUser, validPassword))))
 
 	rw := httptest.NewRecorder()
