@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/klog/v2"
+	klog "k8s.io/klog/v2"
 
 	"github.com/cldmnky/dyndnsr53/pkg/provider"
 )

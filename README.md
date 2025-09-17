@@ -172,6 +172,25 @@ make security
 make verify
 ```
 
+### Continuous Integration
+
+The project includes automated GitHub Actions workflows for testing, building, and deploying:
+
+```bash
+# Create and push a new release tag
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+This triggers:
+
+- Automated testing (unit tests, race detection, linting)
+- Multi-architecture container builds (linux/amd64, linux/arm64)
+- Security scanning with Trivy
+- Publishing to `quay.io/cldmnky/dyndnsr53`
+
+See [GitHub Actions Setup](docs/GITHUB_ACTIONS.md) for configuration details.
+
 ### Testing
 
 ```bash

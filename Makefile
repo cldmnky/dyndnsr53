@@ -7,6 +7,7 @@
 #   Development:  make dev                            # Hot reload development
 #   Container:    make container-build                # Build multi-arch container
 #   Push:         VERSION=v1.0.0 make container-build # Build and push with specific tag
+#   Release:      VERSION=v1.0.0 make tag             # Create git tag (triggers CI/CD)
 #   Tools:        make tools                          # Install all dev tools locally
 #   Help:         make help                           # Show all available targets
 #
@@ -14,6 +15,7 @@
 #   make build && ./build/dyndnsr53 serve --provider none --listen :8080
 #   REGISTRY=quay.io/myuser make container-build
 #   VERSION=v1.2.3 make container-build               # Tags: v1.2.3 and latest
+#   VERSION=v1.2.3 make tag                           # Create tag and trigger CI/CD
 
 # Go parameters
 GOCMD=go
@@ -222,6 +224,17 @@ security:
 ## Verify everything works
 verify: deps tidy fmt test lint
 
+## Create and push a git tag (triggers GitHub Actions release)
+tag:
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Error: VERSION is required. Usage: make tag VERSION=v1.0.0"; \
+		exit 1; \
+	fi
+	@echo "Creating and pushing tag: $(VERSION)"
+	git tag $(VERSION)
+	git push origin $(VERSION)
+	@echo "Tag $(VERSION) pushed. GitHub Actions will now build and push the container image."
+
 ## Show help
 help:
 	@echo "dyndnsr53 - DynDNS Route53 Server"
@@ -233,6 +246,7 @@ help:
 	@echo "  make dev                             # Hot reload development"
 	@echo "  make container-build                 # Build multi-arch container"
 	@echo "  VERSION=v1.0.0 make container-build  # Build and push with specific tag"
+	@echo "  VERSION=v1.0.0 make tag              # Create git tag (triggers CI/CD)"
 	@echo "  make tools                           # Install all dev tools locally"
 	@echo ""
 	@echo "Available targets:"
@@ -262,6 +276,7 @@ help:
 	@echo "  make build && ./build/dyndnsr53 serve --provider none --listen :8080"
 	@echo "  REGISTRY=quay.io/myuser make container-build"
 	@echo "  VERSION=v1.2.3 make container-build    # Tags: v1.2.3 and latest"
+	@echo "  VERSION=v1.2.3 make tag                # Create tag and trigger CI/CD"
 	@echo ""
 	@echo "Registry: $(REGISTRY)"
 	@echo "Image:    $(IMAGE_NAME)"
