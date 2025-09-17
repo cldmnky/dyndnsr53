@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dyndnsr53
+  labels:
+    app: dyndnsr53
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dyndnsr53
+  template:
+    metadata:
+      labels:
+        app: dyndnsr53
+    spec:
+      serviceAccountName: dyndnsr53
+      containers:
+      - name: dyndnsr53
+        image: quay.io/cldmnky/dyndnsr53:latest
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: AWS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: dyndnsr53-secret
+              key: aws-region
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: dyndnsr53-secret
+              key: aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dyndnsr53-secret
+              key: aws-secret-access-key
+        - name: ZONE_ID
+          valueFrom:
+            secretKeyRef:
+              name: dyndnsr53-secret
+              key: zone-id
+        command:
+        - /ko-app/dyndnsr53
+        args:
+        - serve
+        - --provider=route53
+        - --zone-id=$(ZONE_ID)
+        - --listen=:8080
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "25m"
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+      securityContext:
+        runAsNonRoot: true

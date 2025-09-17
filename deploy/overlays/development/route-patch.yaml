@@ -1,0 +1,6 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dyndnsr53
+spec:
+  host: dyndnsr53-dev.apps.cluster.example.com  # Development hostname

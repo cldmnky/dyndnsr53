@@ -71,8 +71,16 @@ func StartServer(addr string) error {
 // StartServerWithProvider starts the HTTP server with the given provider
 func (s *Server) StartServer(addr string) error {
 	http.HandleFunc("/nic/update", s.dynDNSUpdateHandler)
+	http.HandleFunc("/health", s.healthHandler)
 	slog.Info("Starting DynDNS API server", "addr", addr)
 	return http.ListenAndServe(addr, nil)
+}
+
+// healthHandler provides a simple health check endpoint
+func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "OK")
 }
 
 func (s *Server) dynDNSUpdateHandler(w http.ResponseWriter, r *http.Request) {

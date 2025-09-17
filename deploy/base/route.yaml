@@ -1,0 +1,21 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dyndnsr53
+  labels:
+    app: dyndnsr53
+  annotations:
+    haproxy.router.openshift.io/timeout: 60s
+    haproxy.router.openshift.io/balance: roundrobin
+spec:
+  host: dyndnsr53.apps.cluster.example.com  # Change this to your cluster domain
+  to:
+    kind: Service
+    name: dyndnsr53
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

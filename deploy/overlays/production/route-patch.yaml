@@ -1,0 +1,11 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: dyndnsr53
+  annotations:
+    haproxy.router.openshift.io/rate-limit-connections: "true"
+    haproxy.router.openshift.io/rate-limit-connections.concurrent-tcp: "10"
+    haproxy.router.openshift.io/rate-limit-connections.rate-http: "100"
+    haproxy.router.openshift.io/rate-limit-connections.rate-tcp: "100"
+spec:
+  host: dyndnsr53.apps.cluster.example.com  # Production hostname
