@@ -30,6 +30,10 @@ build-errors.log
 # Ko build cache
 .ko/
 
+# Kustomize temporary files
+deploy/overlays/*/kustomization.yaml.bak
+deploy/overlays/*/.kustomization.yaml.swp
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
@@ -39,6 +43,9 @@ go.work.sum
 
 # env file
 .env
+
+# AWS credentials file
+.aws.json
 
 # Editor/IDE
 # .idea/

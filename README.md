@@ -226,7 +226,7 @@ podman run -p 8080:8080 \
 
 ### Kubernetes Deployment
 
-Example deployment:
+Example Kubernetes deployment:
 
 ```yaml
 apiVersion: apps/v1
@@ -246,10 +246,11 @@ spec:
       containers:
       - name: dyndnsr53
         image: quay.io/cldmnky/dyndnsr53:latest
-        args: ["serve", "--provider", "route53", "--zone-id", "Z1234567890ABC"]
         ports:
         - containerPort: 8080
         env:
+        - name: AWS_REGION
+          value: "us-east-1"
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
@@ -260,19 +261,44 @@ spec:
             secretKeyRef:
               name: aws-credentials
               key: secret-access-key
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: dyndnsr53
-spec:
-  selector:
-    app: dyndnsr53
-  ports:
-  - port: 80
-    targetPort: 8080
-  type: LoadBalancer
+        command: ["/ko-app/dyndnsr53"]
+        args: ["serve", "--provider=route53", "--zone-id=Z1234567890ABC"]
 ```
+
+### OpenShift Deployment
+
+For OpenShift deployments with Kustomize, see the [deployment guide](deploy/README.md):
+
+**Setup AWS credentials** (this file will be gitignored):
+```bash
+cat > .aws.json << 'EOF'
+{
+  "AccessKey": {
+    "AccessKeyId": "YOUR_AWS_ACCESS_KEY_ID",
+    "SecretAccessKey": "YOUR_AWS_SECRET_ACCESS_KEY"
+  },
+  "Region": "us-east-1",
+  "ZoneId": "Z0123456789ABCDEFGH"
+}
+EOF
+```
+
+**Deploy using make targets**:
+```bash
+# Deploy to development
+make deploy-dev
+
+# Deploy to production
+make deploy-prod
+
+# Deploy specific tag
+make deploy-tag TAG=v1.0.0 ENV=production
+
+# Check deployment status
+make deploy-status
+```
+
+The deploy script will automatically read the AWS credentials from `.aws.json`, encode them as base64, and inject them into the Kubernetes secret.
 
 ## Architecture
 

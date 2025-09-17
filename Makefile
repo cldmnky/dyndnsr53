@@ -272,6 +272,9 @@ help:
 	@echo "Pipeline targets:"
 	@grep -E '^## (CI|Release).*' $(MAKEFILE_LIST) | sed 's/## /  /'
 	@echo ""
+	@echo "Deployment targets:"
+	@grep -E '^## (Deploy|Show|Clean).*' $(MAKEFILE_LIST) | sed 's/## /  /'
+	@echo ""
 	@echo "Examples:"
 	@echo "  make build && ./build/dyndnsr53 serve --provider none --listen :8080"
 	@echo "  REGISTRY=quay.io/myuser make container-build"
@@ -287,5 +290,46 @@ ci: verify coverage
 
 ## Release pipeline
 release: clean verify build-cross container-build
+
+##@ OpenShift Deployment
+
+## Deploy to OpenShift development environment
+deploy-dev:
+	@echo "Deploying to OpenShift development environment..."
+	oc apply -k deploy/overlays/development/
+
+## Deploy to OpenShift production environment  
+deploy-prod:
+	@echo "Deploying to OpenShift production environment..."
+	oc apply -k deploy/overlays/production/
+
+## Deploy to OpenShift with custom tag
+deploy-tag:
+	@if [ -z "$(TAG)" ]; then \
+		echo "Error: TAG is required. Usage: make deploy-tag TAG=v1.0.0 ENV=production"; \
+		exit 1; \
+	fi
+	@if [ -z "$(ENV)" ]; then \
+		echo "Error: ENV is required. Usage: make deploy-tag TAG=v1.0.0 ENV=production"; \
+		exit 1; \
+	fi
+	@echo "Deploying tag $(TAG) to $(ENV) environment..."
+	@cd deploy/overlays/$(ENV) && \
+		kustomize edit set image quay.io/cldmnky/dyndnsr53:$(TAG) && \
+		oc apply -k .
+
+## Show OpenShift deployment status
+deploy-status:
+	@echo "Development environment:"
+	@oc get pods,svc,route -n dyndnsr53-dev -l app=dyndnsr53 2>/dev/null || echo "No development deployment found"
+	@echo ""
+	@echo "Production environment:"
+	@oc get pods,svc,route -n dyndnsr53-prod -l app=dyndnsr53 2>/dev/null || echo "No production deployment found"
+
+## Clean up OpenShift deployments
+deploy-clean:
+	@echo "Cleaning up OpenShift deployments..."
+	@oc delete -k deploy/overlays/development/ 2>/dev/null || echo "Development deployment not found"
+	@oc delete -k deploy/overlays/production/ 2>/dev/null || echo "Production deployment not found"
 
 .DEFAULT_GOAL := help

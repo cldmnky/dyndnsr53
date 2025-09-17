@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: dyndnsr53
 spec:
-  replicas: 2  # Multiple replicas for production
+  replicas: 1  # Reduced replicas due to cluster resource constraints
   template:
     spec:
       containers:
