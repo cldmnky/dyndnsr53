@@ -58,7 +58,9 @@ git push origin v1.0.0
 ### 3. Security Scan Job
 
 - Runs Trivy vulnerability scanner on the built image
-- Uploads results to GitHub Security tab
+- Displays results in GitHub Actions summary
+- Uploads scan results as artifacts for download
+- Optionally uploads to GitHub Security tab (requires GitHub Advanced Security)
 
 ## Image Tags
 
@@ -73,7 +75,19 @@ For a tag `v1.2.3`, the workflow will create and push:
 - **Distroless base images**: Uses ko's default distroless images for minimal attack surface
 - **SBOM generation**: Creates Software Bill of Materials for supply chain security
 - **Security scanning**: Automated vulnerability scanning with Trivy
+- **Security reports**: Results displayed in GitHub Actions and uploaded as artifacts
 - **Build summaries**: Detailed information about each build in GitHub Actions
+
+## Security Scanning
+
+The workflow includes comprehensive security scanning:
+
+- **Trivy Scanner**: Scans container images for known vulnerabilities
+- **Results Display**: Security scan results shown in GitHub Actions summary
+- **Artifact Upload**: Scan results saved as downloadable artifacts for 30 days
+- **Advanced Security**: If GitHub Advanced Security is enabled, results are also uploaded to the Security tab
+
+**Note**: GitHub Advanced Security features (Security tab integration) require a paid GitHub plan for private repositories but are free for public repositories.
 
 ## Local Testing
 
@@ -114,3 +128,10 @@ make container-run
 - Confirm the registry URL is correct (`quay.io/cldmnky`)
 - Check repository permissions on Quay.io
 - Verify the repository exists and is accessible
+
+### Security Scan Issues
+
+- **"Resource not accessible by integration"**: This indicates GitHub Advanced Security is not enabled
+- **Solution**: The workflow will still run security scans and display results in Actions summary
+- **Advanced Security**: Enable GitHub Advanced Security for Security tab integration
+- **Artifacts**: Security scan results are always available as downloadable artifacts
