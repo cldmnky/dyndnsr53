@@ -13,24 +13,25 @@ import (
 )
 
 // Route53Provider implements the Provider interface for AWS Route53
-var _ provider.Provider = (*Route53Provider)(nil)
+var _ provider.Provider = (*Provider)(nil)
 
-type Route53Provider struct {
+// Provider represents a Route53 DNS provider
+type Provider struct {
 	client *route53.Client
 	zoneID string
 }
 
 // NewRoute53Provider creates a new Route53Provider for a specific hosted zone
-func NewRoute53Provider(ctx context.Context, zoneID string, awsCfg aws.Config) (*Route53Provider, error) {
+func NewRoute53Provider(_ context.Context, zoneID string, awsCfg aws.Config) (*Provider, error) {
 	if zoneID == "" {
 		return nil, fmt.Errorf("zoneID must not be empty")
 	}
 	client := route53.NewFromConfig(awsCfg)
-	return &Route53Provider{client: client, zoneID: zoneID}, nil
+	return &Provider{client: client, zoneID: zoneID}, nil
 }
 
 // UpdateRecord updates the A record for the given FQDN to the specified IP address
-func (p *Route53Provider) UpdateRecord(fqdn, ip string) error {
+func (p *Provider) UpdateRecord(fqdn, ip string) error {
 	if fqdn == "" || ip == "" {
 		return fmt.Errorf("fqdn and ip must not be empty")
 	}

@@ -57,7 +57,7 @@ AIR ?= $(LOCALBIN)/air
 GOLANGCI_LINT ?= $(LOCALBIN)/golangci-lint
 
 # Tool Versions
-GOLANGCI_LINT_VERSION ?= v1.54.2
+GOLANGCI_LINT_VERSION ?= v1.62.2
 
 .PHONY: all build-all build-cross build-linux build-windows build-darwin clean test coverage deps help run dev install tools ko air golangci-lint lint lint-fix container-build container-build-local container-build-local-multiarch container-push container-run container-info
 

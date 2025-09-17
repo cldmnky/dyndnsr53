@@ -17,7 +17,7 @@ var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Run the DynDNS API server",
 	Long:  `Start the DynDNS-compatible API server for updating DNS records.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		addr, _ := cmd.Flags().GetString("listen")
 		if addr == "" {
 			addr = ":8080"

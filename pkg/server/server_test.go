@@ -15,7 +15,7 @@ type MockProvider struct {
 	updateError  error
 }
 
-func (m *MockProvider) UpdateRecord(fqdn, ip string) error {
+func (m *MockProvider) UpdateRecord(_, _ string) error {
 	m.updateCalled = true
 	return m.updateError
 }

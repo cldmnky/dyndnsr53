@@ -1,37 +1,10 @@
 # golangci-lint configuration for dyndnsr53
 run:
   timeout: 5m
-  issues-exit-code: 1
-  tests: true
-  build-tags: []
-  skip-dirs:
-    - vendor
-    - tmp
-    - build
-    - bin
 
 linters:
   enable:
-    - errcheck
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - unused
     - gofmt
     - goimports
-  disable:
-    - typecheck  # Disable typecheck as it's having issues with klog
-
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - gosec
-    - path: pkg/
-      text: "weak cryptographic primitive"
-
-output:
-  format: colored-line-number
-  print-issued-line: true
-  print-linter-name: true
+    - misspell
+    - revive
